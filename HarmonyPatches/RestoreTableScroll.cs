@@ -3,6 +3,7 @@ using HMUI;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using BetterSongList.Util;
 
 namespace BetterSongList.HarmonyPatches {
 	[HarmonyPatch]
@@ -11,7 +12,6 @@ namespace BetterSongList.HarmonyPatches {
 
 		static int? scrollToIndex = null;
 		static bool doResetScrollOnNext = false;
-		static bool gotoLastSelectedOnNextSetData = false;
 
 		public static void ResetScroll() {
 			scrollToIndex = 0;
@@ -20,10 +20,6 @@ namespace BetterSongList.HarmonyPatches {
 #if TRACE
 			Plugin.Log.Warn("RestoreTableScroll.ResetScroll()");
 #endif
-		}
-
-		public static void GotoLastSelectedOnNextSetData() {
-			gotoLastSelectedOnNextSetData = true;
 		}
 
 		[HarmonyPriority(int.MaxValue)]
@@ -47,11 +43,11 @@ namespace BetterSongList.HarmonyPatches {
 #endif
 				bool specificMap = false;
 
-				if(scrollToIndex == null || gotoLastSelectedOnNextSetData) {
-					gotoLastSelectedOnNextSetData = false;
-					// If we havent saved an index yet where to scroll to, work with the last selected level
+				var lastSongInPack = PlaylistsUtil.FindLastSelectedSong(Config.Instance.LastPack);
+
+				if(lastSongInPack != null) {
 					for(int i = 0; i < (____previewBeatmapLevels?.Length ?? 0); i++) {
-						if(____previewBeatmapLevels[i].levelID == Config.Instance.LastSong) {
+						if(____previewBeatmapLevels[i].levelID == lastSongInPack) {
 							scrollToIndex = i;
 							specificMap = true;
 
@@ -70,14 +66,16 @@ namespace BetterSongList.HarmonyPatches {
 				Plugin.Log.Warn(string.Format("-> Scrolling to {0} (Specific map: {1})", scrollToIndex, specificMap));
 #endif
 
-				if(specificMap)
-					____tableView.SelectCellWithIdx((int)scrollToIndex, false);
+				if(specificMap || scrollToIndex == 0)
+				{
+					____tableView.ScrollToCellWithIdx(
+						(int)scrollToIndex,
+						specificMap ? TableView.ScrollPositionType.Center : TableView.ScrollPositionType.Beginning,
+						specificMap
+					);
 
-				____tableView.ScrollToCellWithIdx(
-					(int)scrollToIndex,
-					specificMap ? TableView.ScrollPositionType.Center : TableView.ScrollPositionType.Beginning,
-					specificMap
-				);
+					____tableView.SelectCellWithIdx((int)scrollToIndex, false);
+				}
 			}
 		}
 	}

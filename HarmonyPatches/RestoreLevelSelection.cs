@@ -51,7 +51,6 @@ namespace BetterSongList.HarmonyPatches {
 #if TRACE
 			Plugin.Log.Error("LevelCollectionNavigationController.DidActivate():Postfix");
 #endif
-			RestoreTableScroll.GotoLastSelectedOnNextSetData();
 
 			/*
 			 * If we dont do that, the pre-selected level (Assuming another level wasnt selected afterwads)

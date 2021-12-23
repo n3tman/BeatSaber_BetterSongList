@@ -1,5 +1,8 @@
-﻿using IPA.Config.Stores;
+﻿using System.Collections.Generic;
+using IPA.Config.Stores;
 using System.Runtime.CompilerServices;
+using IPA.Config.Stores.Attributes;
+using IPA.Config.Stores.Converters;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
 namespace BetterSongList {
@@ -14,7 +17,17 @@ namespace BetterSongList {
 
 		public string LastSong { get; set; } = "";
 		public string LastCategory { get; set; } = "All";
-		public string LastPack { get; set; } = "";
+		public string LastPack { get; set; } = null;
+
+		[UseConverter(typeof(ListConverter<Collection>))]
+		public virtual List<Collection> LastSelectedSongs { get; set; } = new List<Collection>();
+		public class Collection
+		{
+			[NonNullable]
+			public virtual string pack { get; set; } = string.Empty;
+			[NonNullable]
+			public virtual string song { get; set; } = string.Empty;
+		}
 
 		public bool AllowWipDelete { get; set; } = false;
 		public bool ReselectLastSong { get; set; } = true;

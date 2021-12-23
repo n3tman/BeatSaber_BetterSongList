@@ -10,7 +10,7 @@ namespace BetterSongList.HarmonyPatches {
 		static void CollectionSet(IAnnotatedBeatmapLevelCollection beatmapLevelCollection) {
 			if(beatmapLevelCollection != null) {
 				// Save the collection we're on for reselection purposes
-				Config.Instance.LastPack = beatmapLevelCollection.collectionName ?? "";
+				Config.Instance.LastPack = beatmapLevelCollection.collectionName ?? null;
 			}
 #if TRACE
 			Plugin.Log.Warn(string.Format("AnnotatedBeatmapLevelCollectionsViewController.HandleDidSelectAnnotatedBeatmapLevelCollection(): {0}", beatmapLevelCollection?.collectionName));

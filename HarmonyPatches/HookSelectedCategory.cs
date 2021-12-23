@@ -15,6 +15,7 @@ namespace BetterSongList.HarmonyPatches {
 			Plugin.Log.Warn("SelectLevelCategoryViewController.LevelFilterCategoryIconSegmentedControlDidSelectCell():Prefix => ResetScroll()");
 #endif
 			RestoreTableScroll.ResetScroll();
+			Config.Instance.LastPack = null;
 		}
 
 		[HarmonyPriority(int.MinValue)]

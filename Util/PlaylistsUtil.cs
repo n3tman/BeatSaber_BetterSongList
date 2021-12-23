@@ -63,5 +63,36 @@ namespace BetterSongList.Util {
 				return blistPlaylist.BeatmapLevels;
 			return null;
 		}
+
+		public static void SaveLastSelectedSong(string pack, string song)
+		{
+			var lastSelected = Config.Instance.LastSelectedSongs;
+			var found = false;
+
+			if (lastSelected.Count > 0)
+			{
+				foreach (var collection in lastSelected.Where(collection => collection.pack == pack))
+				{
+					collection.song = song;
+					found = true;
+					break;
+				}
+			}
+
+			if (lastSelected.Count == 0 || !found)
+			{
+				Config.Instance.LastSelectedSongs.Add(new Config.Collection
+				{
+					pack = pack, song = song
+				});
+			}
+		}
+		
+		public static string FindLastSelectedSong(string pack)
+		{
+			var lastSelected = Config.Instance.LastSelectedSongs;
+
+			return pack == null || lastSelected.Count == 0 ? null : lastSelected.Where(collection => collection.pack == pack).Select(collection => collection.song).FirstOrDefault();
+		}
 	}
 }
